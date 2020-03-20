@@ -1,7 +1,7 @@
 //fulls the canvas element from index.html
 var canvas = document.querySelector('canvas');
 
-//initilizes the canvas
+
 const len= 50
 
 canvas.width = len*10;
@@ -12,6 +12,12 @@ content.fillRect(0,0,len*10,len*10);
 var grid = [];
 
 var current;
+
+//this is what i want to test
+//
+//
+//
+//stuff
 
 //sets the board
 function board()
