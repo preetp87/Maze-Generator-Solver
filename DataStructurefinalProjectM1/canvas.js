@@ -13,11 +13,13 @@ var grid = [];
 
 var current;
 
-//this is what i want to test
-//
-//
-//
-//stuff
+
+function index(i, j){
+ return i + j* 10
+}
+
+
+
 
 //sets the board
 function board()
@@ -99,7 +101,32 @@ function cell(i,j)
 
 
    
-    }       
+    }
+    
+    this.checkNeighbours = function(){
+        var neighbours = [];
+
+        var top = grid[index(i,j-1)];
+        var right = grid[index(i+1,j)];
+        var bottom = grid[index(i,j+1)];
+        var left = grid[index(i-1,j)];
+        
+        if (!top.visited){
+            neighbours.push(top);
+        }
+        
+        if (!right.visited){
+            neighbours.push(right);
+        }
+        
+        if (!bottom.visited){
+            neighbours.push(bottom);
+        }
+        
+        if (!left.visited){
+            neighbours.push(left);
+        }
+    }
 }
 
 //draw function
