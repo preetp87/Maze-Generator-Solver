@@ -15,7 +15,10 @@ var current;
 
 
 function index(i, j){
- return i + j* 10
+ if (i<0 || j<0 || i> 9 || j > 9){
+  return -1;
+ }
+ return i + j* 10;
 }
 
 
@@ -111,19 +114,19 @@ function cell(i,j)
         var bottom = grid[index(i,j+1)];
         var left = grid[index(i-1,j)];
         
-        if (!top.visited){
+        if (top && !top.visited){
             neighbours.push(top);
         }
         
-        if (!right.visited){
+        if (right && !right.visited){
             neighbours.push(right);
         }
         
-        if (!bottom.visited){
+        if (bottom && !bottom.visited){
             neighbours.push(bottom);
         }
         
-        if (!left.visited){
+        if (left && !left.visited){
             neighbours.push(left);
         }
     }
