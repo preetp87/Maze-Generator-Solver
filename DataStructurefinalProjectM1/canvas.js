@@ -108,7 +108,7 @@ function draw()
     current.checkNeighbour();
     current.show();
 }
-
+//hello this is the change i made
 
 board();
 draw();
