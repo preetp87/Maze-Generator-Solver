@@ -129,6 +129,14 @@ function cell(i,j)
         if (left && !left.visited){
             neighbours.push(left);
         }
+        if (neighbours.length > 0){
+          var r = Math.floor(Math.random()*neighbours.length));
+          return neighbours[r];
+        }
+        else
+        {
+         return undefined;
+        }
     }
 }
 
@@ -141,7 +149,11 @@ function draw()
     }
 
     current.visited = true;
-    current.checkNeighbour();
+    var next = current.checkNeighbour();
+    if (next){
+     next.visited = true;
+     current = next;
+    }
     current.show();
 }
 //hello this is the change i made
