@@ -191,7 +191,9 @@ function removewalls(a,b)
 {
     
     var x = a.j - b.j;
+   // console.log(x);
     var y = a.i - b.i;
+    //console.log(y);
     //left case
     if(x===1)
     {
@@ -207,14 +209,14 @@ function removewalls(a,b)
     //bottom case
     if(y === 1)
     {
-        a.wall[2]== false;
-        b.wall[0] == false;
+        a.wall[0]== false;
+        b.wall[2] == false;
     }
     //top case
-    else (y===-1)
+    else if(y===-1)
     {
-        a.wall[0] =false;
-        b.wall[2] = false;
+        a.wall[2] =false;
+        b.wall[0] = false;
     }
 
 }
@@ -223,3 +225,4 @@ function removewalls(a,b)
 //calls the function board and draw.
 board();
 draw();
+
