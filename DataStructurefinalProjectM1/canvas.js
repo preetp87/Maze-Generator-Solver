@@ -3,14 +3,18 @@
 var canvas = document.querySelector('canvas');
 
 //initilizes the canvas
-const len= 50
-
-canvas.width = len*10;
-canvas.height = len*10;
+const len= 50;
+const units = 20;
+canvas.width = len*units;
+canvas.height = len*units;
 var content = canvas.getContext("2d");
 content.fillStyle = "gray";
-content.fillRect(0,0,len*10,len*10);
+content.fillRect(0,0,len*units,len*units);
 var grid = [];
+
+
+
+var Visits = [];
 
 var current;
 
@@ -18,12 +22,13 @@ var current;
 //sets the board
 function board()
 {
-    for (var i =0; i< 10; i++)
+    for (var i =0; i< units; i++)
     {
-        for(var j =0; j< 10;j++)
+        for(var j =0; j< units;j++)
         {
             var unit = new cell(i,j);
             grid.push(unit);
+        
         }
     }
     current = grid[0];
@@ -33,11 +38,11 @@ function board()
 //used to get the referance value of a cell grid 
 function index(i,j)
 {
-    if(i<0 || j<0|| i> 9|| j> 9)
+    if(i<0 || j<0|| i> units-1|| j> units-1)
     {
         return -1;
     }
-    return j + i*10;
+    return j + i*units;
 
 }
 
@@ -52,6 +57,14 @@ function cell(i,j)
     this.y = len;
     this.wall = [true,true,true,true]; 
     this.visited = false;
+
+
+    this.highlight = function()
+    {
+        content.fillStyle = "#1F618D";
+        content.fillRect(j*len, i*len, len, len);
+    }
+    
 
     //checking current cell neighbours
     this.checkNeighbour = function()
@@ -101,8 +114,8 @@ function cell(i,j)
         if(this.visited)
         {
             
-            content.fillStyle = "blue";
-            content.fillRect(j*len+2, i*len+2, len-4, len-4);
+            content.fillStyle = "#F8C471 ";
+            content.fillRect(j*len, i*len, len, len);
             
             
             
@@ -114,37 +127,37 @@ function cell(i,j)
         {
          //top
         content.beginPath();
-        content.moveTo(i*len, j*len);
-        content.lineTo(i*len+len, j*len);
+        content.moveTo(this.j*len, this.i*len);
+        content.lineTo(this.j*len+len, this.i*len);
         content.stroke();
         }
+
         if(this.wall[1])
         {
         //right
         content.beginPath();
-        content.moveTo(i*len+len, j*len);
-        content.lineTo(i*len+len, j*len+len);
+        content.moveTo(this.j*len+ len, this.i*len);
+        content.lineTo(this.j*len+len, this.i*len+len);
         content.stroke();
         }
+
         if(this.wall[2])
         {
         //bottom
         content.beginPath();
-        content.moveTo(i*len+len, j*len+len);
-        content.lineTo(i*len, j*len+len);
+        content.moveTo(this.j*len, this.i*len+len);
+        content.lineTo(this.j*len +len, this.i*len+len);
         content.stroke();
         }
-
+        
         if(this.wall[3])
         {
         //left
         content.beginPath();
-        content.moveTo(i*len, j*len+len);
-        content.lineTo(i*len, j*len);
+        content.moveTo(this.j*len, this.i*len);
+        content.lineTo(this.j*len, this.i*len+len);
         content.stroke();
         }
-
-
 
     }       
 }
@@ -162,14 +175,16 @@ function draw()
     //initilizes the first cell "current" visited
     current.visited = true;
     current.show();
+    current.highlight();
     console.log(current);
+
 
     // runs the function at 100 miliseconds intervals
     setInterval(function()
     {
         content.clearRect(0, 0, canvas.width, canvas.height);
         content.fillStyle = "gray";
-        content.fillRect(0,0,len*10,len*10);
+        content.fillRect(0,0,len*units,len*units);
         for(var i =0; i< grid.length; i++)
         {
             grid[i].show();
@@ -181,14 +196,20 @@ function draw()
         var next = current.checkNeighbour();
         if(next)
         {
+            Visits.push(current);
             removewalls(current,next);
             current = next;
             next.visited = true;
             console.log(current);
             current.show();
-    
+            current.highlight();
         }
-    },1000);
+        else if(Visits.length>0)
+        {
+            current = Visits.pop();
+            current.highlight();
+        }
+    },10);
 
     
     
@@ -209,21 +230,21 @@ function removewalls(a,b)
         b.wall[1] = false;
     }
     //right case
-    else if(x===-1)
+    if(x===-1)
     {
-        a.wall[1] =false;
+        a.wall[1] = false;
         b.wall[3] = false;
     }
     //bottom case
     if(y === 1)
     {
-        a.wall[0]== false;
-        b.wall[2] == false;
+        a.wall[0] = false;
+        b.wall[2] = false;
     }
     //top case
-    else if(y===-1)
+    if(y===-1)
     {
-        a.wall[2] =false;
+        a.wall[2] = false;
         b.wall[0] = false;
     }
 
@@ -232,5 +253,6 @@ function removewalls(a,b)
 
 //calls the function board and draw.
 board();
+
 draw();
 
