@@ -165,7 +165,15 @@ function draw()
     console.log(current);
 
     // runs the function at 100 miliseconds intervals
-    setInterval(function(){
+    setInterval(function()
+    {
+        content.clearRect(0, 0, canvas.width, canvas.height);
+        content.fillStyle = "gray";
+        content.fillRect(0,0,len*10,len*10);
+        for(var i =0; i< grid.length; i++)
+        {
+            grid[i].show();
+        }
 
         //sets the value of next to current neighbour
         //if it exsists, it will set it as current, mark visited
