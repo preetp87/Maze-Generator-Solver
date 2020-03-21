@@ -28,14 +28,14 @@ function board()
         {
             var unit = new cell(i,j);
             grid.push(unit);
-        
+
         }
     }
     current = grid[0];
 }
 
 
-//used to get the referance value of a cell grid 
+//used to get the referance value of a cell grid
 function index(i,j)
 {
     if(i<0 || j<0|| i> units-1|| j> units-1)
@@ -55,7 +55,7 @@ function cell(i,j)
     this.j = j;
     this.x = len;
     this.y = len;
-    this.wall = [true,true,true,true]; 
+    this.wall = [true,true,true,true];
     this.visited = false;
 
 
@@ -64,7 +64,7 @@ function cell(i,j)
         content.fillStyle = "#1F618D";
         content.fillRect(j*len, i*len, len, len);
     }
-    
+
 
     //checking current cell neighbours
     this.checkNeighbour = function()
@@ -98,10 +98,10 @@ function cell(i,j)
         //when all neighbours have been pushed into stack, randomly pick one and return that neighbour
         if(neighbour.length>0){
             var r = Math.floor(Math.random()*neighbour.length);
-          
+
             return neighbour[r];
         }
-        
+
         else {
             return undefined;
         }
@@ -113,12 +113,12 @@ function cell(i,j)
         //if the cell has been visited, change the color
         if(this.visited)
         {
-            
+
             content.fillStyle = "#F8C471 ";
             content.fillRect(j*len, i*len, len, len);
-            
-            
-            
+
+
+
         }
 
         //draw line colour with black stroke
@@ -149,7 +149,7 @@ function cell(i,j)
         content.lineTo(this.j*len +len, this.i*len+len);
         content.stroke();
         }
-        
+
         if(this.wall[3])
         {
         //left
@@ -159,7 +159,7 @@ function cell(i,j)
         content.stroke();
         }
 
-    }       
+    }
 }
 
 
@@ -211,14 +211,14 @@ function draw()
         }
     },10);
 
-    
-    
+
+
 }
 
 
 function removewalls(a,b)
 {
-    
+
     var x = a.j - b.j;
    // console.log(x);
     var y = a.i - b.i;
@@ -255,4 +255,3 @@ function removewalls(a,b)
 board();
 
 draw();
-
