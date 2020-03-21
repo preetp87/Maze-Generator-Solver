@@ -1,7 +1,8 @@
+
 //fulls the canvas element from index.html
 var canvas = document.querySelector('canvas');
 
-
+//initilizes the canvas
 const len= 50
 
 canvas.width = len*10;
@@ -13,23 +14,12 @@ var grid = [];
 
 var current;
 
-
-function index(i, j){
- if (i<0 || j<0 || i> 9 || j > 9){
-  return -1;
- }
- return i + j* 10;
-}
-
-
-
-
 //sets the board
 function board()
 {
-    for (var i =0; i< len; i++)
+    for (var i =0; i< 10; i++)
     {
-        for(var j =0; j< len;j++)
+        for(var j =0; j< 10;j++)
         {
             var unit = new cell(i,j);
             grid.push(unit);
@@ -38,10 +28,23 @@ function board()
     current = grid[0];
 }
 
+function index(i,j)
+{
+    if(i<0 || j<0|| i> 9|| j> 9)
+    {
+        return -1;
+    }
+    return j + i*10;
+
+}
+
 
 //cell object for each unit.
 function cell(i,j)
 {
+
+    this.i = i;
+    this.j = j;
     this.x = len;
     this.y = len;
     this.wall = [true,true,true,true]; 
@@ -50,7 +53,38 @@ function cell(i,j)
 
     this.checkNeighbour = function()
     {
-        
+        var neighbour = [];
+        var top = grid[index(i-1, j)];
+        var right = grid[index(i,j+1)];
+        var buttom = grid[index(i+1, j)];
+        var left = grid[(index(i, j-1))];
+
+
+        if(top && !top.visted)
+        {
+            neighbour.push(top);
+        }
+        if(right && !right.visted)
+        {
+            neighbour.push(right);
+        }
+        if(buttom && !buttom.visted)
+        {
+            neighbour.push(buttom);
+        }
+        if(left && !left.visted)
+        {
+            neighbour.push(left);
+        }
+        console.log(neighbour);
+        if(neighbour.length>0){
+            var r = Math.floor(Math.random()*neighbour.length);
+          console.log(r);
+            return neighbour[r];
+        }
+        else {
+            return undefined;
+        }
     }
 
     //show methoad to draw the lines
@@ -92,7 +126,7 @@ function cell(i,j)
         content.lineTo(i*len, j*len+len);
         content.stroke();
         }
- 
+
         if(this.wall[3])
         {
         //left
@@ -103,42 +137,10 @@ function cell(i,j)
         }
 
 
-   
-    }
-    
-    this.checkNeighbours = function(){
-        var neighbours = [];
 
-        var top = grid[index(i,j-1)];
-        var right = grid[index(i+1,j)];
-        var bottom = grid[index(i,j+1)];
-        var left = grid[index(i-1,j)];
-        
-        if (top && !top.visited){
-            neighbours.push(top);
-        }
-        
-        if (right && !right.visited){
-            neighbours.push(right);
-        }
-        
-        if (bottom && !bottom.visited){
-            neighbours.push(bottom);
-        }
-        
-        if (left && !left.visited){
-            neighbours.push(left);
-        }
-        if (neighbours.length > 0){
-          var r = Math.floor(Math.random()*neighbours.length));
-          return neighbours[r];
-        }
-        else
-        {
-         return undefined;
-        }
-    }
+    }       
 }
+
 
 //draw function
 function draw()
@@ -149,15 +151,24 @@ function draw()
     }
 
     current.visited = true;
-    var next = current.checkNeighbour();
-    if (next){
-     next.visited = true;
-     current = next;
-    }
     current.show();
+
+    for(var i =0;i<3;i++)
+    {
+        var next = current.checkNeighbour();
+        if(next)
+        {
+            next.visited = true;
+            current = next;
+            //console.log(current);
+            current.show();
+    
+        }
+    }
+    
 }
-//hello this is the change i made
+
 
 board();
 draw();
-console.log(current);
+
