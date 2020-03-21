@@ -14,6 +14,7 @@ var grid = [];
 
 var current;
 
+
 //sets the board
 function board()
 {
@@ -28,6 +29,8 @@ function board()
     current = grid[0];
 }
 
+
+//used to get the referance value of a cell grid 
 function index(i,j)
 {
     if(i<0 || j<0|| i> 9|| j> 9)
@@ -42,7 +45,7 @@ function index(i,j)
 //cell object for each unit.
 function cell(i,j)
 {
-
+    //cell attributes
     this.i = i;
     this.j = j;
     this.x = len;
@@ -50,38 +53,42 @@ function cell(i,j)
     this.wall = [true,true,true,true]; 
     this.visited = false;
 
-
+    //checking current cell neighbours
     this.checkNeighbour = function()
     {
+        // neighbour attributes
         var neighbour = [];
+        // relative reference to current cell
         var top = grid[index(i-1, j)];
         var right = grid[index(i,j+1)];
         var buttom = grid[index(i+1, j)];
         var left = grid[(index(i, j-1))];
 
-
-        if(top && !top.visted)
+        //if value of neighbour exsits and it has not been visided push into array
+        if(top && !top.visited)
         {
             neighbour.push(top);
         }
-        if(right && !right.visted)
+        if(right && !right.visited)
         {
             neighbour.push(right);
         }
-        if(buttom && !buttom.visted)
+        if(buttom && !buttom.visited)
         {
             neighbour.push(buttom);
         }
-        if(left && !left.visted)
+        if(left && !left.visited)
         {
             neighbour.push(left);
         }
-        console.log(neighbour);
+
+        //when all neighbours have been pushed into stack, randomly pick one and return that neighbour
         if(neighbour.length>0){
             var r = Math.floor(Math.random()*neighbour.length);
-          console.log(r);
+          
             return neighbour[r];
         }
+        
         else {
             return undefined;
         }
@@ -90,17 +97,18 @@ function cell(i,j)
     //show methoad to draw the lines
     this.show = function()
     {
+        //if the cell has been visited, change the color
         if(this.visited)
         {
             
-            content.beginPath();
-            content.rect(i*len, j*len, len, len);
-            content.fillStyle = "red";
-            content.fill();
+            content.fillStyle = "blue";
+            content.fillRect(j*len+2, i*len+2, len-4, len-4);
+            
+            
             
         }
 
-
+        //draw line colour with black stroke
         content.strokeStyle = "black";
         if(this.wall[0])
         {
@@ -145,30 +153,73 @@ function cell(i,j)
 //draw function
 function draw()
 {
+    //draw each grid
     for(var i =0; i< grid.length; i++)
     {
         grid[i].show();
     }
 
+    //initilizes the first cell "current" visited
     current.visited = true;
     current.show();
+    console.log(current);
 
-    for(var i =0;i<3;i++)
-    {
+    // runs the function at 100 miliseconds intervals
+    setInterval(function(){
+
+        //sets the value of next to current neighbour
+        //if it exsists, it will set it as current, mark visited
+        // and repeat.
         var next = current.checkNeighbour();
         if(next)
         {
-            next.visited = true;
+            removewalls(current,next);
             current = next;
-            //console.log(current);
+            next.visited = true;
+            console.log(current);
             current.show();
     
         }
-    }
+    },1000);
+
+    
     
 }
 
 
+function removewalls(a,b)
+{
+    
+    var x = a.j - b.j;
+    var y = a.i - b.i;
+    //left case
+    if(x===1)
+    {
+        a.wall[3] = false;
+        b.wall[1] = false;
+    }
+    //right case
+    else if(x===-1)
+    {
+        a.wall[1] =false;
+        b.wall[3] = false;
+    }
+    //bottom case
+    if(y === 1)
+    {
+        a.wall[2]== false;
+        b.wall[0] == false;
+    }
+    //top case
+    else (y===-1)
+    {
+        a.wall[0] =false;
+        b.wall[2] = false;
+    }
+
+}
+
+
+//calls the function board and draw.
 board();
 draw();
-
