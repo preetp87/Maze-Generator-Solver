@@ -1,7 +1,16 @@
-
 const n = 3;
+var canvas = document.querySelector('canvas');
+const len = 50;
+canvas.width = len*n;
+canvas.height = len*n;
+var content = canvas.getContext("2d");
+content.fillStyle = "gray";
+content.fillRect(0,0,len*n,len*n);
+
 var numOfVertex= 0;
 var linearVertex = [];
+var current;
+
 
 
 function index(y,x)
@@ -66,6 +75,60 @@ function vertex(y, x)
     this.x = x;
     this.visited = false;
     this.edgeConnection = [];
+    this.wall = [true,true,true,true];
+
+    this.show = function()
+    {
+        //if the cell has been visited, change the color
+        if(this.visited)
+        {
+
+            content.fillStyle = "#F8C471 ";
+            content.fillRect(y*len, x*len, len, len);
+
+
+
+        }
+
+        //draw line colour with black stroke
+        content.strokeStyle = "black";
+        if(this.wall[0])
+        {
+         //top
+        content.beginPath();
+        content.moveTo(this.y*len, this.x*len);
+        content.lineTo(this.y*len+len, this.x*len);
+        content.stroke();
+        }
+
+        if(this.wall[1])
+        {
+        //right
+        content.beginPath();
+        content.moveTo(this.y*len+ len, this.x*len);
+        content.lineTo(this.y*len+len, this.x*len+len);
+        content.stroke();
+        }
+
+        if(this.wall[2])
+        {
+        //bottom
+        content.beginPath();
+        content.moveTo(this.y*len, this.x*len+len);
+        content.lineTo(this.y*len +len, this.x*len+len);
+        content.stroke();
+        }
+
+        if(this.wall[3])
+        {
+        //left
+        content.beginPath();
+        content.moveTo(this.y*len, this.x*len);
+        content.lineTo(this.y*len, this.x*len+len);
+        content.stroke();
+        }
+
+    }
 
 }
 
@@ -134,8 +197,12 @@ function mst()
     {
         //current vertex
         var vertex = tmp;
+        
         //current vertex pushed into visited array
         visited.push(vertex.value);
+        
+        vertex.visited = true;
+        vertex.show();
         //checks the connecting edges of vertex and pushs (start, end, and weight) into edges array
         for(var i =0; i< vertex.edgeConnection.length; i++)
         {
@@ -164,6 +231,19 @@ function mst()
         return MST;
 }
 
+function draw()
+{
+    //draw each cell
+    for(var i =0; i< linearVertex.length; i++)
+    {
+        linearVertex[i].show();
+    }
+    
+
+}
+
 board();
+draw();
+
 console.log(linearVertex);
 console.log(mst());
