@@ -64,36 +64,8 @@ function vertex(y, x)
     //this.size = 50;
     this.y = y;
     this.x = x;
+    this.visited = false;
     this.edgeConnection = [];
-    this.checkNeighbour = function()
-    {
-        var neighbour = [];
-
-        var top = linearVertex[index(y-1,x)];
-        var right = linearVertex[index(y,x+1)];
-        var bottom = linearVertex[index(y+1,x)];
-        var left = linearVertex[(index(y,x-1))];
-
-        if(top)
-        {
-            neighbour.push(top);
-        }
-        if(right)
-        {
-            neighbour.push(right);
-        }
-        if(bottom)
-        {
-            neighbour.push(bottom);
-        }
-        if(left)
-        {
-            neighbour.push(left);
-        }
-        return neighbour;
-
-    }
-
 
 }
 
@@ -148,6 +120,50 @@ function board()
 
 }
 
+function mst()
+{
+    var adjlist = linearVertex;
+    var v = n*n;
+    var tmp = pickrandom();
+    var MST = [];
+    var edges = [];
+    var visited = [];
+    var minEdge = [null, null, Infinity];
+
+    while(MST.length!== v-1)
+    {
+        //current vertex
+        var vertex = tmp;
+        //current vertex pushed into visited array
+        visited.push(vertex.value);
+        //checks the connecting edges of vertex and pushs (start, end, and weight) into edges array
+        for(var i =0; i< vertex.edgeConnection.length; i++)
+        {
+            edges.push([vertex.value,vertex.edgeConnection[i].vertex2, vertex.edgeConnection[i].weight])
+        }
+
+        //finds the minimum edge from the edges array while making sure that minimum edge is not in the visited array
+        //then stores it into minEdge array (start, end, and weight)
+        for(var j= 0; j<edges.length; j++)
+        {
+            if(edges[j][2] < minEdge[2] && visited.indexOf(edges[j][1]) ===-1)
+            {
+                minEdge = edges[j];
+            }
+        }
+        //removes the minEdge from edges Array
+        edges.splice(edges.indexOf(minEdge),1);
+        //pushes the value into MST array
+        MST.push(minEdge);
+        // sets the temp(vertex) to the minEdge(vertex)
+        tmp = linearVertex[minEdge[1]];
+        //resets minEdge to infinity so that it can be used to find the minimum value again
+        minEdge = [null,null,Infinity];
+    }
+
+        return MST;
+}
 
 board();
-console.log(pickrandom());
+console.log(linearVertex);
+console.log(mst());
