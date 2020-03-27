@@ -1,18 +1,23 @@
-const n = 10;
 var canvas = document.querySelector('canvas');
 const len = 50;
+
+
+
+const n = 5;
 canvas.width = len*n;
 canvas.height = len*n;
 var content = canvas.getContext("2d");
-content.fillStyle = "gray";
-content.fillRect(0,0,len*n,len*n);
+content.strokeStyle = "black";
+content.lineWidth =5;
+content.rect(0,0,len*n,len*n);
+content.stroke();
 
+
+var count = 0;
 var numOfVertex= 0;
+var numofVertexSol = 0;
 var linearVertex = [];
-var current;
-var startnode;
-
-
+var solution = []
 
 function index(y,x)
 {
@@ -27,7 +32,7 @@ function index(y,x)
 function pickrandom(){
     //chose horizontal or vertical
     var axis = Math.floor(Math.random()*10);
-    //vertical
+    //horizontal
     if (axis <=4){
         //chose 0 or 9
         var row = Math.floor(Math.random()*10);
@@ -46,7 +51,7 @@ function pickrandom(){
             return linearVertex[ind];
         }
     }
-    //horizontal
+    //vertical
     else {
         //chose 0 or 9
         var col = Math.floor(Math.random()*10);
@@ -67,76 +72,65 @@ function pickrandom(){
     }
 }
 
+
 function vertex(y, x)
-{
+{   
     this.value;
     //this.size = 50;
     this.y = y;
     this.x = x;
     this.visited = false;
     this.edgeConnection = [];
-    this.wall=[true,true,true,true];
-    this.solnvisited = false;
-
-    this.show = function()
+    this.highlighted = function()
     {
-        //if the cell has been visited, change the color
         if(this.visited)
         {
-
-            content.fillStyle = "#F8C471 ";
-            content.fillRect(y*len, x*len, len, len);
-
-
-
+            content.fillStyle = "#EC7063";
+            content.fillRect(this.x*len, this.y*len, len, len);
         }
+    }
+    
+    this.show = function()
+    {
 
-        if(this.solnvisited)
+        for(var i = 0; i< this.edgeConnection.length; i++)
         {
-            content.fillStyle = "red";
-            content.fillRect(y*len, x*len, len, len);
-        }
+            //top
+            if((this.edgeConnection[i].vertex1 === index(this.y,this.x) && this.edgeConnection[i].vertex2 === index(this.y-1,this.x)))
+            {
+                content.beginPath();
+                content.moveTo(this.x*len, this.y*len);
+                content.lineTo(this.x*len+len, this.y*len);
+                content.stroke();
+            }
 
-        //draw line colour with black stroke
-        content.strokeStyle = "black";
-        if(this.wall[0])
-        {
-         //top
-        content.beginPath();
-        content.moveTo(this.y*len, this.x*len);
-        content.lineTo(this.y*len+len, this.x*len);
-        content.stroke();
-        }
-
-        if(this.wall[1])
-        {
-        //right
-        content.beginPath();
-        content.moveTo(this.y*len+len, this.x*len);
-        content.lineTo(this.y*len+len, this.x*len+len);
-        content.stroke();
-        }
-
-        if(this.wall[2])
-        {
-        //bottom
-        content.beginPath();
-        content.moveTo(this.y*len, this.x*len+len);
-        content.lineTo(this.y*len+len, this.x*len+len);
-        content.stroke();
-        }
-
-        if(this.wall[3])
-        {
-        //left
-        content.beginPath();
-        content.moveTo(this.y*len, this.x*len);
-        content.lineTo(this.y*len, this.x*len+len);
-        content.stroke();
+            //right
+            if((this.edgeConnection[i].vertex1 === index(this.y,this.x) && this.edgeConnection[i].vertex2 === index(this.y,this.x+1)))
+            {
+                content.beginPath();
+                content.moveTo(this.x*len+len, this.y*len);
+                content.lineTo(this.x*len+len, this.y*len+len);
+                content.stroke();
+            }
+            // down
+            if((this.edgeConnection[i].vertex1 === index(this.y,this.x) && this.edgeConnection[i].vertex2 === index(this.y+1,this.x)))
+            {
+                content.beginPath();
+                content.moveTo(this.x*len, this.y*len+len);
+                content.lineTo(this.x*len+len, this.y*len+len);
+                content.stroke();
+            }
+            //left
+            if((this.edgeConnection[i].vertex1 === index(this.y,this.x) && this.edgeConnection[i].vertex2=== index(this.y,this.x-1)))
+            {
+                content.beginPath();
+                content.moveTo(this.x*len, this.y*len);
+                content.lineTo(this.x*len, this.y*len+len);
+                content.stroke();
+            }
         }
 
     }
-
 }
 
 function edge(vertex1, vertex2, weight)
@@ -157,10 +151,10 @@ function board()
             unit.value = numOfVertex;
             linearVertex.push(unit);
             numOfVertex++;
-
+            
         }
     }
-    //horizontal lines
+    //horizontal lines 
     for(var y=0; y<n; y++)
     {
         for(var x = 0; x< n-1; x++)
@@ -169,7 +163,7 @@ function board()
             var edge1 = new edge(linearVertex[index(y,x)].value, linearVertex[index(y,x+1)].value, r);
             var edge2 = new edge(linearVertex[index(y,x+1)].value, linearVertex[index(y,x)].value, r);
             linearVertex[index(y,x)].edgeConnection.push(edge1);
-            linearVertex[index(y,x+1)].edgeConnection.push(edge2);
+            linearVertex[index(y,x+1)].edgeConnection.push(edge2);  
         }
 
     }
@@ -187,31 +181,27 @@ function board()
 
         }
     }
-    console.log(linearVertex);
+
+
 }
+
 
 function mst()
 {
     var adjlist = linearVertex;
     var v = n*n;
     var tmp = pickrandom();
-    
     var MST = [];
     var edges = [];
     var visited = [];
     var minEdge = [null, null, Infinity];
-    
+
     while(MST.length!== v-1)
     {
         //current vertex
         var vertex = tmp;
-        
-
         //current vertex pushed into visited array
         visited.push(vertex.value);
-
-        
-        
         //checks the connecting edges of vertex and pushs (start, end, and weight) into edges array
         for(var i =0; i< vertex.edgeConnection.length; i++)
         {
@@ -227,32 +217,9 @@ function mst()
                 minEdge = edges[j];
             }
         }
-        
-          
         //removes the minEdge from edges Array
         edges.splice(edges.indexOf(minEdge),1);
         //pushes the value into MST array
-        //top
-        var one = linearVertex[minEdge[0]];
-        var two = linearVertex[minEdge[1]];
-        one.visited = true;
-        two.visited = true;
-        if (one.x == (two.x+1)){
-            one.wall[0] = false;
-            two.wall[2] = false;
-        }
-        else if (one.y == (two.y-1)){
-            one.wall[1] = false;
-            two.wall[3] = false;
-        }
-        else if (one.x == (two.x-1)){
-            one.wall[2] = false;
-            two.wall[0] = false;
-        }
-        else if (one.y == (two.y+1)){
-            one.wall[3] = false;
-            two.wall[1] = false;
-        }
         MST.push(minEdge);
         // sets the temp(vertex) to the minEdge(vertex)
         tmp = linearVertex[minEdge[1]];
@@ -263,90 +230,179 @@ function mst()
         return MST;
 }
 
+function creategraph(MST)
+{
+    for(var i = 0; i< MST.length; i++)
+    {
+       // var del = linearVertex[MST[i][0]].edgeConnection;
+        //var del2 = linearVertex[MST[i][1]].edgeConnection;
+        for(var j = 0; j< linearVertex[MST[i][0]].edgeConnection.length; j++)
+        {
+            if(linearVertex[MST[i][0]].edgeConnection[j].vertex2 === MST[i][1])
+            {
+                //del.splice(j,1);
+                linearVertex[MST[i][0]].edgeConnection.splice(j,1);
 
-function creategraph(MST){
-    for (var i = 0; i < linearVertex.length;i++){
-        var length = linearVertex[i].edgeConnection.length;
-        linearVertex[i].edgeConnection.splice(0,length);
+            }
+        }
+        for(var k= 0; k< linearVertex[MST[i][1]].edgeConnection.length; k++)
+        {
+            if( linearVertex[MST[i][1]].edgeConnection[k].vertex2 === MST[i][0])
+            {
+                linearVertex[MST[i][1]].edgeConnection.splice(k,1);
+
+            }
+        }
 
     }
-    
-    for (var i = 0; i < MST.length;i++){
-        var edgev1 = new edge( MST[i][0],MST[i][1],MST[i][2]);
-        
-        linearVertex[MST[i][0]].edgeConnection.push(edgev1);
-    }
-    
+
+
 }
 
-function peek(array){
-    return array[array.length -1];
-}
 function dfs(mstDFS)
 {
-    var stacks = [];
-    
-    var starting = linearVertex[mstDFS[0][0]];
-    console.log(starting);
-    console.log(endnode);
 
-    var ending = endnode;
-    
+    for (var y = 0; y< n; y++)
+    {
+        for(var x = 0; x<n; x++)
+        {
+            var units = new vertex(y,x);
+            units.value = numofVertexSol;
+            solution.push(units);
+            numofVertexSol++;
+            
+        }
+    }
+    for(var i =0; i<mstDFS.length; i++)
+    {
+        var edgeS1 = new edge(mstDFS[i][0],mstDFS[i][1],mstDFS[i][2]);
+        var edgeS2 = new edge(mstDFS[i][1],mstDFS[i][0],mstDFS[i][2]);
+        solution[mstDFS[i][0]].edgeConnection.push(edgeS1);
+        solution[mstDFS[i][1]].edgeConnection.push(edgeS2)
+    }
+    //console.log(solution);
+
+    var stacks = [];
+    var starting = solution[mstDFS[0][0]];
+    var ending = solution[8];
     var path = [];
     stacks.push(starting);
     console.log(peek(stacks));
-    
-    while(true) 
-    {
-        var curNode = peek(stacks);
-        path.push(curNode.value);
-        curNode.solnvisited = true;
-        
-        if(curNode.value === ending.value)
+
+    setTimeout(function(){
+        var stop =setInterval(function() 
         {
-            break;
-        }
-        var unvisited = 0;
-        curNode.edgeConnection.forEach(function(id){
-            
-            var node = linearVertex[id.vertex2];
-            if(!node.solnvisited)
+            if(peek(stacks).value != ending.value)
             {
-                stacks.push(node);
-                unvisited +=1;
+                var curNode = peek(stacks);
+                path.push(curNode.value);
+                curNode.visited = true;
+                var unvisited = 0;
+                curNode.edgeConnection.forEach(function(id){
+                    var node = solution[id.vertex2];
+                    if(!node.visited)
+                    {
+                        stacks.push(node);
+                        unvisited +=1;
+                    }
+                })
+                if(unvisited ===0)
+                {
+                    stacks.pop();
+                }
+                for(var i = 0; i< stacks.length;i++)
+                {
+                    stacks[i].highlighted();
+                }
             }
-        })
-        if(unvisited ===0)
-        {
-            stacks.pop();
-        }
-    }
-    console.log(stacks);
-}
+            else
+            {
+                ending.visited = true;
+                ending.highlighted();
+                clearInterval(stop);
+                console.log(stacks);
+            }
+            for(var i=0; i< linearVertex.length; i++)
+            {
+                linearVertex[i].show();
+            }
 
 
+        },100);
 
-function draw()
-{
-    setInterval(function(){
-    //draw each cell
-    for(var i =0; i< linearVertex.length; i++)
-    {
-        linearVertex[i].show();
-    }
+    },mstDFS.length*100);
     
-    }, 3000);
+    console.log(stacks);
 
 }
+
+
+
+function peek(Stack)
+{
+    return Stack[Stack.length-1]
+}
+
+
+
+function draw(mst)
+{
+
+    var carve = setInterval(function() {
+        content.clearRect(0,0,canvas.width,canvas.height)
+        content.strokeStyle = "black";
+        content.lineWidth =3;
+        content.rect(0,0,len*n,len*n);
+        content.stroke();
+        for(var i=0; i< linearVertex.length; i++)
+        {
+            linearVertex[i].show();
+        }
+
+        if(count<mst.length)
+        {
+            for(var j = 0; j< linearVertex[mst[count][0]].edgeConnection.length; j++)
+            {
+                if(linearVertex[mst[count][0]].edgeConnection[j].vertex2 === mst[count][1])
+                {
+                    //del.splice(j,1);
+                    linearVertex[mst[count][0]].edgeConnection.splice(j,1);
+    
+                }
+            }
+            for(var k= 0; k< linearVertex[mst[count][1]].edgeConnection.length; k++)
+            {
+                if( linearVertex[mst[count][1]].edgeConnection[k].vertex2 === mst[count][0])
+                {
+                    linearVertex[mst[count][1]].edgeConnection.splice(k,1);
+    
+                }
+            }
+        }
+        count++;
+
+        if(count>mst.length)
+        {
+            clearInterval(carve);
+        }
+        
+    },100);
+   
+    dfs(mst);
+
+}
+
 
 board();
-draw();
-var endnode = pickrandom();
+console.log(linearVertex);
+
+
 
 var mstGraph = mst();
 console.log(mstGraph);
-creategraph(mstGraph);
 console.log(linearVertex);
-draw();
-dfs(mstGraph);
-draw();
+//creategraph(mstGraph);
+console.log(mstGraph[0][1]);
+// dfs(mstGraph);
+draw(mstGraph);
+
