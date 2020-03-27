@@ -3,7 +3,11 @@ const len = 50;
 
 
 
-const n = 10;
+const speedtravase = 10;
+
+const n = 30;
+
+const speed = n*2;
 canvas.width = len*n;
 canvas.height = len*n;
 var content = canvas.getContext("2d");
@@ -216,7 +220,6 @@ function board()
 
 function mst()
 {
-    var adjlist = linearVertex;
     var v = n*n;
     var tmp = pickrandom();
     var MST = [];
@@ -347,11 +350,15 @@ function dfs(mstDFS)
             {
                 linearVertex[i].show();
             }
+            content.rect(0,0,len*n,len*n);
+            content.stroke();
+            starting.startindex();
+            ending.endingindex();
 
 
-        },100);
+        },speedtravase);
 
-    },mstDFS.length*100);
+    },mstDFS.length*(speed));
 
 
 
@@ -414,7 +421,7 @@ function draw(mst)
             clearInterval(carve);
         }
         
-    },100);
+    },speed);
    
     dfs(mst);
 
@@ -433,5 +440,4 @@ console.log(linearVertex);
 console.log(mstGraph[0][1]);
 // dfs(mstGraph);
 draw(mstGraph);
-
 
