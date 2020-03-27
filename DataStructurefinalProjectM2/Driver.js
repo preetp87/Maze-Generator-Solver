@@ -1,4 +1,4 @@
-const n = 10;
+const n = 3;
 var canvas = document.querySelector('canvas');
 const len = 50;
 canvas.width = len*n;
@@ -27,7 +27,7 @@ function index(y,x)
 function pickrandom(){
     //chose horizontal or vertical
     var axis = Math.floor(Math.random()*10);
-    //horizontal
+    //vertical
     if (axis <=4){
         //chose 0 or 9
         var row = Math.floor(Math.random()*10);
@@ -46,7 +46,7 @@ function pickrandom(){
             return linearVertex[ind];
         }
     }
-    //vertical
+    //horizontal
     else {
         //chose 0 or 9
         var col = Math.floor(Math.random()*10);
@@ -99,7 +99,7 @@ function vertex(y, x)
          //top
         content.beginPath();
         content.moveTo(this.y*len, this.x*len);
-        content.lineTo(this.y*len, this.x*len+len);
+        content.lineTo(this.y*len+len, this.x*len);
         content.stroke();
         }
 
@@ -107,7 +107,7 @@ function vertex(y, x)
         {
         //right
         content.beginPath();
-        content.moveTo(this.y*len, this.x*len+len);
+        content.moveTo(this.y*len+len, this.x*len);
         content.lineTo(this.y*len+len, this.x*len+len);
         content.stroke();
         }
@@ -116,7 +116,7 @@ function vertex(y, x)
         {
         //bottom
         content.beginPath();
-        content.moveTo(this.y*len+len, this.x*len);
+        content.moveTo(this.y*len, this.x*len+len);
         content.lineTo(this.y*len+len, this.x*len+len);
         content.stroke();
         }
@@ -126,7 +126,7 @@ function vertex(y, x)
         //left
         content.beginPath();
         content.moveTo(this.y*len, this.x*len);
-        content.lineTo(this.y*len+len, this.x*len);
+        content.lineTo(this.y*len, this.x*len+len);
         content.stroke();
         }
 
@@ -232,20 +232,19 @@ function mst()
         var two = linearVertex[minEdge[1]];
         one.visited = true;
         two.visited = true;
-        if (one.y == (two.y+1)){
+        if (one.x == (two.x+1)){
             one.wall[0] = false;
             two.wall[2] = false;
         }
-        //right
-        else if (one.x == (two.x-1)){
+        else if (one.y == (two.y-1)){
             one.wall[1] = false;
             two.wall[3] = false;
         }
-        else if (one.y == (two.y-1)){
+        else if (one.x == (two.x-1)){
             one.wall[2] = false;
             two.wall[0] = false;
         }
-        else if (one.x == (two.x+1)){
+        else if (one.y == (two.y+1)){
             one.wall[3] = false;
             two.wall[1] = false;
         }
@@ -298,7 +297,7 @@ function draw()
     {
         linearVertex[i].show();
     }
-
+    
 
 }
 
