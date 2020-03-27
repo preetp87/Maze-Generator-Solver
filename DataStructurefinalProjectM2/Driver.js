@@ -273,11 +273,44 @@ function creategraph(MST){
     }
     
 }
+//---------Change it up in terms of your variables preet-----
+function dfs(mstDFS)
+{
+   var stacks = [];
+    var sol =[];
+    var starting = solution[mstDFS[0][0]];
+    var ending = solution[8];
+    var valuefound =false;
+    var path = [];
+    stacks.push(starting);
+    console.log(peek(stacks));
 
-
-function DFS(graph, start_node, end_node){
-    
+    while(true) 
+    {
+        var curNode = peek(stacks);
+        path.push(curNode.value);
+        curNode.visited = true;
+        if(curNode.value === ending.value)
+        {
+            break
+        }
+        var unvisited = 0;
+        curNode.edgeConnection.forEach(function(id){
+            var node = solution[id.vertex2];
+            if(!node.visited)
+            {
+                stacks.push(node);
+                unvisited +=1;
+            }
+        })
+        if(unvisited ===0)
+        {
+            stacks.pop();
+        }
+    }
+    console.log(stacks);
 }
+//-----------------------
 
 function findneighbours(point){
     var neighbourstack = [];
