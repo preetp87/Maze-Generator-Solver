@@ -3,7 +3,7 @@ const len = 50;
 
 
 
-const n = 5;
+const n = 10;
 canvas.width = len*n;
 canvas.height = len*n;
 var content = canvas.getContext("2d");
@@ -12,12 +12,17 @@ content.lineWidth =5;
 content.rect(0,0,len*n,len*n);
 content.stroke();
 
-
+var count2 = 0;
 var count = 0;
 var numOfVertex= 0;
 var numofVertexSol = 0;
 var linearVertex = [];
-var solution = []
+var solution = [];
+
+var starting;
+var ending;
+
+var solutionPath=[];
 
 function index(y,x)
 {
@@ -89,7 +94,30 @@ function vertex(y, x)
             content.fillRect(this.x*len, this.y*len, len, len);
         }
     }
+    this.startindex = function()
+    {
+        content.fillStyle ="#AED6F1";
+        content.fillRect(this.x*len, this.y*len, len, len);
+    }
+    this.endingindex = function()
+    {
+        content.fillStyle ="#2874A6";
+        content.fillRect(this.x*len, this.y*len, len, len);
+    }
+    this.backtracking = function()
+    {
+        content.fillStyle ="#F1948A ";
+        content.fillRect(this.x*len, this.y*len, len, len);
+    }
     
+    this.path = function()
+    {
+        if(this.visited)
+        {
+            content.fillStyle = "#1F618D";
+            content.fillRect(this.x*len, this.y*len, len, len);   
+        }
+    }
     this.show = function()
     {
 
@@ -195,7 +223,7 @@ function mst()
     var edges = [];
     var visited = [];
     var minEdge = [null, null, Infinity];
-
+    tmp.startindex();
     while(MST.length!== v-1)
     {
         //current vertex
@@ -230,34 +258,6 @@ function mst()
         return MST;
 }
 
-function creategraph(MST)
-{
-    for(var i = 0; i< MST.length; i++)
-    {
-       // var del = linearVertex[MST[i][0]].edgeConnection;
-        //var del2 = linearVertex[MST[i][1]].edgeConnection;
-        for(var j = 0; j< linearVertex[MST[i][0]].edgeConnection.length; j++)
-        {
-            if(linearVertex[MST[i][0]].edgeConnection[j].vertex2 === MST[i][1])
-            {
-                //del.splice(j,1);
-                linearVertex[MST[i][0]].edgeConnection.splice(j,1);
-
-            }
-        }
-        for(var k= 0; k< linearVertex[MST[i][1]].edgeConnection.length; k++)
-        {
-            if( linearVertex[MST[i][1]].edgeConnection[k].vertex2 === MST[i][0])
-            {
-                linearVertex[MST[i][1]].edgeConnection.splice(k,1);
-
-            }
-        }
-
-    }
-
-
-}
 
 function dfs(mstDFS)
 {
@@ -283,8 +283,8 @@ function dfs(mstDFS)
     //console.log(solution);
 
     var stacks = [];
-    var starting = solution[mstDFS[0][0]];
-    var ending = solution[8];
+    starting = solution[mstDFS[0][0]];
+    ending = solution[pickrandom().value];
     var path = [];
     stacks.push(starting);
     console.log(peek(stacks));
@@ -292,6 +292,8 @@ function dfs(mstDFS)
     setTimeout(function(){
         var stop =setInterval(function() 
         {
+            starting.startindex();
+            ending.endingindex();
             if(peek(stacks).value != ending.value)
             {
                 var curNode = peek(stacks);
@@ -308,19 +310,38 @@ function dfs(mstDFS)
                 })
                 if(unvisited ===0)
                 {
+                    peek(stacks).backtracking();
                     stacks.pop();
+                    
                 }
                 for(var i = 0; i< stacks.length;i++)
                 {
                     stacks[i].highlighted();
+                    starting.startindex();
                 }
             }
             else
             {
+
                 ending.visited = true;
                 ending.highlighted();
-                clearInterval(stop);
-                console.log(stacks);
+
+                if(count2<stacks.length)
+                {
+                    if(stacks[count2].visited == true)
+                    {
+                        stacks[count2].path();
+                    }
+                    count2++;
+                }
+                else
+                {  
+                    ending.path();
+                    ending.endingindex();                   
+                    clearInterval(stop);
+                }
+
+
             }
             for(var i=0; i< linearVertex.length; i++)
             {
@@ -331,6 +352,9 @@ function dfs(mstDFS)
         },100);
 
     },mstDFS.length*100);
+
+
+
     
     console.log(stacks);
 
@@ -354,9 +378,13 @@ function draw(mst)
         content.lineWidth =3;
         content.rect(0,0,len*n,len*n);
         content.stroke();
+
+        starting = linearVertex[mst[0][0]];
+
         for(var i=0; i< linearVertex.length; i++)
         {
             linearVertex[i].show();
+            starting.startindex();
         }
 
         if(count<mst.length)
@@ -405,4 +433,5 @@ console.log(linearVertex);
 console.log(mstGraph[0][1]);
 // dfs(mstGraph);
 draw(mstGraph);
+
 
