@@ -1,4 +1,4 @@
-const n = 3;
+const n = 10;
 var canvas = document.querySelector('canvas');
 const len = 50;
 canvas.width = len*n;
@@ -11,7 +11,7 @@ var numOfVertex= 0;
 var linearVertex = [];
 var current;
 var startnode;
-var endnode = pickrandom();
+
 
 
 function index(y,x)
@@ -67,7 +67,6 @@ function pickrandom(){
     }
 }
 
-
 function vertex(y, x)
 {
     this.value;
@@ -77,7 +76,7 @@ function vertex(y, x)
     this.visited = false;
     this.edgeConnection = [];
     this.wall=[true,true,true,true];
-    
+    this.solnvisited = false;
 
     this.show = function()
     {
@@ -90,6 +89,12 @@ function vertex(y, x)
 
 
 
+        }
+
+        if(this.solnvisited)
+        {
+            content.fillStyle = "red";
+            content.fillRect(y*len, x*len, len, len);
         }
 
         //draw line colour with black stroke
@@ -190,7 +195,7 @@ function mst()
     var adjlist = linearVertex;
     var v = n*n;
     var tmp = pickrandom();
-    startnode = tmp;
+    
     var MST = [];
     var edges = [];
     var visited = [];
@@ -273,31 +278,39 @@ function creategraph(MST){
     }
     
 }
-//---------Change it up in terms of your variables preet-----
+
+function peek(array){
+    return array[array.length -1];
+}
 function dfs(mstDFS)
 {
-   var stacks = [];
-    var sol =[];
-    var starting = solution[mstDFS[0][0]];
-    var ending = solution[8];
-    var valuefound =false;
+    var stacks = [];
+    
+    var starting = linearVertex[mstDFS[0][0]];
+    console.log(starting);
+    console.log(endnode);
+
+    var ending = endnode;
+    
     var path = [];
     stacks.push(starting);
     console.log(peek(stacks));
-
+    
     while(true) 
     {
         var curNode = peek(stacks);
         path.push(curNode.value);
-        curNode.visited = true;
+        curNode.solnvisited = true;
+        
         if(curNode.value === ending.value)
         {
-            break
+            break;
         }
         var unvisited = 0;
         curNode.edgeConnection.forEach(function(id){
-            var node = solution[id.vertex2];
-            if(!node.visited)
+            
+            var node = linearVertex[id.vertex2];
+            if(!node.solnvisited)
             {
                 stacks.push(node);
                 unvisited +=1;
@@ -310,35 +323,30 @@ function dfs(mstDFS)
     }
     console.log(stacks);
 }
-//-----------------------
 
-function findneighbours(point){
-    var neighbourstack = [];
-    for (var i = 0; i < graph.length;i++){
-        if (graph[i][0] == point){
-            neighbourstack.push(graph[i][2]);
-        }
-    }
-    return neighbourstack;
-}
 
 
 function draw()
 {
+    setInterval(function(){
     //draw each cell
     for(var i =0; i< linearVertex.length; i++)
     {
         linearVertex[i].show();
     }
     
+    }, 3000);
 
 }
 
 board();
 draw();
+var endnode = pickrandom();
 
 var mstGraph = mst();
 console.log(mstGraph);
 creategraph(mstGraph);
 console.log(linearVertex);
+draw();
+dfs(mstGraph);
 draw();
