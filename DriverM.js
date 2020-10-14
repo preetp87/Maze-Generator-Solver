@@ -7,7 +7,7 @@ const len = 50;
 //Speed for the solving the maze. Used for the visuals
 const speedtravase = 50;
 //represents the nxn grid
-const n = 20;
+const n = 15;
 
 //speed used for showing the minimum spanning tree visuals
 const speed = n*2;
